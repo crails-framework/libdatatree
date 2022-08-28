@@ -1,0 +1,6 @@
+$out_root/
+{
+  include libdatatree/
+}
+
+export $out_root/libdatatree/$import.target

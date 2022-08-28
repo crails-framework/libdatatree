@@ -1,0 +1,12 @@
+: 1
+name: libdatatree
+version: 2.0.0
+summary: DataTree C++ library
+license: BSD-3-Clause
+description-file: README.md
+url: https://github.com/crails-framework/libdatatree.git
+email: michael@unetresgrossebite.com
+depends: * build2 >= 0.15.0
+depends: * bpkg >= 0.15.0
+depends: libboost-property-tree >= 1.74.0
+depends: libbacktrace ^1.0.0

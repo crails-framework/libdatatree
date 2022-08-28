@@ -1,0 +1,30 @@
+import intf_libs += libbacktrace%lib{backtrace}
+
+lib{datatree}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
+
+hxx{export}@./: cxx.importable = false
+
+cxx.poptions =+ "-I$out_root" "-I$src_root"
+
+{hbmia obja}{*}: cxx.poptions += -DLIBDATATREE_STATIC_BUILD
+{hbmis objs}{*}: cxx.poptions += -DLIBDATATREE_SHARED_BUILD
+
+lib{datatree}:
+{
+  cxx.export.poptions = "-I$out_root/libdatatree/" "-I$src_root/libdatatree/"
+  cxx.export.libs = $intf_libs
+}
+
+liba{datatree}: cxx.export.poptions += -DLIBDATATREE_STATIC
+libs{datatree}: cxx.export.poptions += -DLIBDATATREE_SHARED
+
+if $version.pre_release
+  lib{datatree}: bin.lib.version = "-$version.project_id"
+else
+  lib{datatree}: bin.lib.version = "-$version.major.$version.minor"
+
+{hxx ixx txx}{*}:
+{
+  install         = include/
+  install.subdirs = true
+}

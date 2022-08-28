@@ -1,0 +1,7 @@
+project = libdatatree
+
+using version
+using config
+using test
+using install
+using dist
