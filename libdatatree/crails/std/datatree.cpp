@@ -63,6 +63,16 @@ DataTree& DataTree::from_xml_file(const string& xml_file)
   return *this;
 }
 
+DataTree& DataTree::from_map(const std::map<std::string, std::string>& vars)
+{
+  for (auto it = vars.begin() ; it != vars.end() ; ++it)
+  {
+    Data data = Data(tree, it->first);
+    data = it->second;
+  }
+  return *this;
+}
+
 template<>
 wstring Data::as<wstring>() const
 {

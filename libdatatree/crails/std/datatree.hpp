@@ -4,6 +4,7 @@
 # include <boost/property_tree/ptree.hpp>
 # include <functional>
 # include <vector>
+# include <map>
 # include <string>
 # include <iostream>
 # include <crails/utils/backtrace.hpp>
@@ -220,6 +221,8 @@ public:
   Data       operator[](const std::string& key)       { return Data(tree, key); }
   const Data operator[](const std::string& key) const { return Data(tree, key); }
   void       clear()                                  { tree.clear(); }
+
+  DataTree& from_map(const std::map<std::string, std::string>&);
 
   DataTree& from_json(std::stringstream&);
   DataTree& from_json(const std::string&);
