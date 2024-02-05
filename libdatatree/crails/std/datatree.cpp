@@ -229,6 +229,24 @@ void Data::destroy()
   tree->get_child(context).erase(key);
 }
 
+Data::iterator Data::begin() const
+{
+  auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
+  return tree.begin();
+}
+
+Data::iterator Data::end() const
+{
+  auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
+  return tree.end();
+}
+
+Data::iterator Data::erase(iterator deleted)
+{
+  auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
+  return iterator(tree.erase(deleted.internal_iterator));
+}
+
 void Data::output(std::ostream& out) const
 {
   boost::property_tree::json_parser::write_json(out, get_ptree());

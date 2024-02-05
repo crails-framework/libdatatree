@@ -205,6 +205,36 @@ public:
 
   std::vector<std::string> get_keys() const;
 
+  class iterator
+  {
+    friend class Data;
+  public:
+    using iterator_type = std::input_iterator_tag;
+    using value_type = Data;
+
+    iterator(const iterator& copy) : internal_iterator(copy.internal_iterator) {}
+    iterator(boost::property_tree::ptree::iterator it) : internal_iterator(it) {}
+  
+    operator Data() const
+    {
+      Data data(internal_iterator->second, internal_iterator->first);
+      data.overload_path("");
+      return data;
+    }
+
+    Data operator*() { return Data(*this); }
+    iterator& operator++() { internal_iterator++; return *this; }
+    bool operator==(const iterator& other) const { return other.internal_iterator == internal_iterator; }
+    bool operator!=(const iterator& other) const { return !operator==(other); }
+
+  private:
+    boost::property_tree::ptree::iterator internal_iterator;
+  };
+
+  iterator begin() const;
+  iterator end() const;
+  iterator erase(iterator deleted);
+
 private:
   boost::property_tree::ptree* tree;
   std::string                  context, key, path;
@@ -233,6 +263,10 @@ public:
   DataTree& from_xml(const std::string&);
   DataTree& from_xml_file(const std::string&);
   std::string to_xml() const;
+
+  Data::iterator begin() const { return as_data().begin(); }
+  Data::iterator end() const { return as_data().end(); }
+  Data::iterator erase(Data::iterator it) { return as_data().erase(it); }
 
   boost::property_tree::ptree&       get_ptree()       { return tree; }
   const boost::property_tree::ptree& get_ptree() const { return tree; }
