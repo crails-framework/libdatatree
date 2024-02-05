@@ -200,7 +200,21 @@ void Data::merge(Data data)
   else
   {
     for (auto value : data.get_ptree())
-      local_tree.put_child(value.first, value.second);
+    {
+      boost::optional<boost::property_tree::ptree&> child
+        = local_tree.get_child_optional(value.first);
+
+      if (value.second.size() > 0 && child)
+      {
+        Data self_child = Data(local_tree, value.first);
+
+        self_child.merge(Data(value.second, ""));
+      }
+      else
+      {
+        local_tree.put_child(value.first, value.second);
+      }
+    }
   }
 }
 
