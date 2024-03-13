@@ -98,18 +98,14 @@ public:
   template<typename T>
   void from_vector(const std::vector<T>& array)
   {
-    if (!(exists()))
-      tree->add_child(path, boost::property_tree::ptree());
+    auto& tree_array = require_ptree();
+
+    for (const T& v : array)
     {
-      auto& tree_array = get_ptree();
+      boost::property_tree::ptree child;
 
-      for (const T& v : array)
-      {
-        boost::property_tree::ptree child;
-
-        child.put("", v);
-        tree_array.push_back(std::make_pair("", child));
-      }
+      child.put("", v);
+      tree_array.push_back(std::make_pair("", child));
     }
   }
 
@@ -200,6 +196,7 @@ public:
   void merge(Data data);
   void merge(DataTree data_tree);
 
+  boost::property_tree::ptree& require_ptree();
   boost::property_tree::ptree& get_ptree() { return tree->get_child(path); }
   const boost::property_tree::ptree& get_ptree() const { return tree->get_child(path); }
 

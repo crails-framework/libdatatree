@@ -9,6 +9,13 @@
 
 using namespace std;
 
+boost::property_tree::ptree& Data::require_ptree()
+{
+  auto child = tree->get_child_optional(path);
+
+  return child ? *child : tree->add_child(path, boost::property_tree::ptree());
+}
+
 string DataTree::to_json() const
 {
   return const_cast<DataTree*>(this)->as_data().to_json();
@@ -190,7 +197,7 @@ bool Data::is_array() const
 
 void Data::merge(Data data)
 {
-  boost::property_tree::ptree& local_tree = get_ptree();
+  boost::property_tree::ptree& local_tree = require_ptree();
 
   if (data.is_array())
   {
@@ -201,8 +208,7 @@ void Data::merge(Data data)
   {
     for (auto value : data.get_ptree())
     {
-      boost::optional<boost::property_tree::ptree&> child
-        = local_tree.get_child_optional(value.first);
+      boost::optional<boost::property_tree::ptree&> child = local_tree.get_child_optional(value.first);
 
       if (value.second.size() > 0 && child)
       {
