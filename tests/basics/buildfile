@@ -1,0 +1,3 @@
+import libs = libdatatree%lib{datatree}
+
+exe{driver}: {hxx ixx txx cxx}{**} $libs testscript{**}
