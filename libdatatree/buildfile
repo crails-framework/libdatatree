@@ -1,4 +1,7 @@
-import intf_libs = libboost-property-tree%lib{boost_property_tree}
+if ($config.libdatatree.alt_build2_imports)
+  libs = libboost-property-tree%lib{boost_property_tree}
+else
+  import intf_libs += libboost-property-tree%lib{boost_property_tree}
 import intf_libs += libbacktrace%lib{backtrace}
 
 lib{datatree}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
