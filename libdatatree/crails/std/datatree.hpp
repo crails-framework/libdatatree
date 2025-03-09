@@ -6,6 +6,7 @@
 # include <vector>
 # include <map>
 # include <string>
+# include <string_view>
 # include <iostream>
 # include <crails/utils/backtrace.hpp>
 
@@ -17,7 +18,7 @@ class Data
 
   void overload_path(const std::string& path) { this->path = path; }
 protected:
-  Data(boost::property_tree::ptree& tree, const std::string& key) :
+  Data(boost::property_tree::ptree& tree, const std::string_view key) :
     tree(&tree),
     context(""),
     key(key),
@@ -25,34 +26,26 @@ protected:
   {
   }
 
-  Data(boost::property_tree::ptree& tree, const std::string& context, const std::string& key) :
+  Data(boost::property_tree::ptree& tree, const std::string& context, const std::string_view key) :
     tree(&tree),
     context(context),
     key(key),
-    path(context.size() > 0 ? (context + '.' + key) : key)
+    path(context.size() > 0 ? (context + '.' + key.data()) : key)
   {
   }
 
 public:
-  template<typename T>
-  T operator[](const std::string& key) const
-  {
-    if (key.length() == 0)
-      throw boost_ext::invalid_argument("Data::operator[] cannot take an empty string");
-    try { return tree->get<T>(path + '.' + key); }
-    catch (const std::exception& e) { throw boost_ext::runtime_error(e.what()); }
-  }
-
-  Data operator[](const std::string& key) const
+  Data operator[](const std::string_view key) const
   {
     if (key.length() == 0)
       throw boost_ext::invalid_argument("Data::operator[] cannot take an empty string");
     return Data(*tree, path, key);
   }
 
-  template<typename T>
-  T operator[](const char* str) const { return operator[]<T>(std::string(str)); }
-  Data operator[](const char* str) const { return operator[](std::string(str)); }
+  Data operator[](const char* key) const
+  {
+    return operator[](std::string_view(key));
+  }
 
   Data at(unsigned int i) const;
 
@@ -242,12 +235,12 @@ template<> std::wstring Data::as<std::wstring>() const;
 class DataTree
 {
 public:
-  operator   Data()                                   { return as_data();       }
-  Data       as_data()                                { return Data(tree, "");  }
-  const Data as_data() const                          { return Data(tree, "");  }
-  Data       operator[](const std::string& key)       { return Data(tree, key); }
-  const Data operator[](const std::string& key) const { return Data(tree, key); }
-  void       clear()                                  { tree.clear(); }
+  operator   Data()                                       { return as_data();       }
+  Data       as_data()                                    { return Data(tree, "");  }
+  const Data as_data() const                              { return Data(tree, "");  }
+  Data       operator[](const std::string_view key)       { return Data(tree, key); }
+  const Data operator[](const std::string_view key) const { return Data(tree, key); }
+  void       clear()                                      { tree.clear(); }
 
   DataTree& from_map(const std::map<std::string, std::string>&);
 

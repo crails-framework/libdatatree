@@ -8,6 +8,8 @@
 int main()
 {
   using namespace std;
+
+  // Basics
   {
     DataTree tree;
 
@@ -25,6 +27,7 @@ int main()
     assert(tree.as_data().count() == 0);
   }
 
+  // Iterators
   {
     DataTree tree;
     vector<string> expected{"valueA", "valueB"};
@@ -40,6 +43,7 @@ int main()
     assert((*tree.begin()).as<string>() == "valueB");
   }
 
+  // Merge
   {
     DataTree tree;
     vector<string> list;
@@ -60,6 +64,7 @@ int main()
     //assert(list.size() == 3);
   }
 
+  // Vectors
   {
     DataTree tree;
 
@@ -70,6 +75,7 @@ int main()
     assert(tree["number_list"].to_vector<int>()[5] == 11);
   }
 
+  // Exists, blank and null
   {
     DataTree tree;
 
@@ -83,6 +89,36 @@ int main()
     assert(tree["toto"].is_blank() == false);
     tree["toto"] = "null";
     assert(tree["toto"].is_null() == true);
+  }
+
+  // OR operator
+  {
+    DataTree tree;
+    tree["tintin"] = 42;
+    tree["tutu"] = 23;
+
+    assert((tree["tintin"] || 10) == 42);
+    assert((tree["toto"] || 10) == 10);
+    assert((tree["toto"] || tree["tintin"]) == 42);
+    assert((tree["tutu"] || tree["tintin"]) == 23);
+    tree["tintin"] = 0;
+    assert((tree["tintin"] || tree["tutu"]) == 0);
+  }
+
+  // This is pointless to run as a test, but it checks for build errors
+  {
+    DataTree tree;
+    Data data = tree["sub"];
+    string keyA("keyA");
+    string_view keyB("keyB");
+    const char* keyC("keyC");
+
+    assert(tree[keyA].exists() == false);
+    assert(tree[keyB].exists() == false);
+    assert(tree[keyC].exists() == false);
+    assert(data[keyA].exists() == false);
+    assert(data[keyB].exists() == false);
+    assert(data[keyC].exists() == false);
   }
 
   return 0;
