@@ -260,7 +260,7 @@ void Data::output(std::ostream& out) const
 
 string Data::to_json() const
 {
-  stringstream stream;
+  ostringstream stream;
 
   output(stream);
   return stream.str();
@@ -268,7 +268,7 @@ string Data::to_json() const
 
 string Data::to_xml() const
 {
-  stringstream stream;
+  ostringstream stream;
 
   boost::property_tree::xml_parser::write_xml(stream, get_ptree());
   return stream.str();
