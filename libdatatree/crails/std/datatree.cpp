@@ -90,29 +90,35 @@ wstring Data::as<wstring>() const
 
 void Data::each(std::function<bool (Data)> functor)
 {
-  auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
-
-  for (boost::property_tree::ptree::value_type& v : tree)
+  if (exists())
   {
-    Data data(v.second, v.first);
+    auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
 
-    data.overload_path("");
-    if (!(functor(data)))
-      break ;
+    for (boost::property_tree::ptree::value_type& v : tree)
+    {
+      Data data(v.second, v.first);
+
+      data.overload_path("");
+      if (!(functor(data)))
+        break ;
+    }
   }
 }
 
 void Data::each(std::function<bool (const Data)> functor) const
 {
-  const auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
-
-  for (const boost::property_tree::ptree::value_type& v : tree)
+  if (exists())
   {
-    Data data(const_cast<boost::property_tree::ptree&>(v.second), v.first);
+    const auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
 
-    data.overload_path("");
-    if (!(functor(data)))
-      break ;
+    for (const boost::property_tree::ptree::value_type& v : tree)
+    {
+      Data data(const_cast<boost::property_tree::ptree&>(v.second), v.first);
+
+      data.overload_path("");
+      if (!(functor(data)))
+        break ;
+    }
   }
 }
 
@@ -237,14 +243,22 @@ void Data::destroy()
 
 Data::iterator Data::begin() const
 {
-  auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
-  return tree.begin();
+  if (exists())
+  {
+    auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
+    return tree.begin();
+  }
+  return this->tree->end();
 }
 
 Data::iterator Data::end() const
 {
-  auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
-  return tree.end();
+  if (exists())
+  {
+    auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
+    return tree.end();
+  }
+  return this->tree->end();
 }
 
 Data::iterator Data::erase(iterator deleted)

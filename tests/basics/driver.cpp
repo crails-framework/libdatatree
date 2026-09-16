@@ -43,6 +43,16 @@ int main()
     assert((*tree.begin()).as<string>() == "valueB");
   }
 
+  // Iterators on empty element
+  {
+    DataTree tree;
+    tree["empty"] = "coucou";
+    for (Data data : tree["empty"])
+      assert(false);
+    for (Data data : tree["undefined"])
+      assert(false);
+  }
+
   // Merge
   {
     DataTree tree;
