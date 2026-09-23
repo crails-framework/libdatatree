@@ -246,7 +246,9 @@ Data::iterator Data::begin() const
   if (exists())
   {
     auto& tree = (path == "") ? *(this->tree) : this->tree->get_child(path);
-    return tree.begin();
+    return is_array()
+      ? iterator{tree.begin()}
+      : iterator{this->tree, path, tree.begin()};
   }
   return this->tree->end();
 }

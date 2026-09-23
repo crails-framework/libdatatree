@@ -202,13 +202,31 @@ public:
     using iterator_type = std::input_iterator_tag;
     using value_type = Data;
 
-    iterator(const iterator& copy) : internal_iterator(copy.internal_iterator) {}
+    iterator(const iterator& copy) :
+      internal_iterator(copy.internal_iterator),
+      tree(copy.tree),
+      context(copy.context)
+    {
+    }
+
+    iterator(boost::property_tree::ptree* tree,  std::string_view context, boost::property_tree::ptree::iterator it) :
+      internal_iterator(it),
+      tree(tree),
+      context(context)
+    {
+    }
+
     iterator(boost::property_tree::ptree::iterator it) : internal_iterator(it) {}
   
     operator Data() const
     {
-      Data data(internal_iterator->second, internal_iterator->first);
-      data.overload_path("");
+      Data data(
+        tree ? *tree : internal_iterator->second,
+        std::string(context),
+        internal_iterator->first
+      );
+      if (!tree)
+        data.overload_path("");
       return data;
     }
 
@@ -219,6 +237,8 @@ public:
 
   private:
     boost::property_tree::ptree::iterator internal_iterator;
+    boost::property_tree::ptree* tree = nullptr;
+    std::string_view context;
   };
 
   iterator begin() const;
